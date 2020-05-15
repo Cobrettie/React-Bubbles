@@ -1,10 +1,11 @@
 import React from 'react';
+import axios from 'axios';
 
 class LoginForm extends React.Component {
   state = {
     credentials: {
-      username: '',
-      password: ''
+      username: 'Lambda School',
+      password: 'i<3Lambd4'
     }
   }
 
@@ -18,7 +19,13 @@ class LoginForm extends React.Component {
   }
 
   login = event => {
-    
+    event.preventDefault()
+
+    axios.post('http://localhost:5000/api/login', this.state.credentials)
+      .then(response => {
+        console.log('LoginForm post req res', response)
+      })
+      .catch(err => console.log(err))
   }
 
   render() {
@@ -27,7 +34,7 @@ class LoginForm extends React.Component {
         <h2>Log in</h2>
 
         <div>
-          <form>
+          <form onSubmit={this.login}>
             <input 
               type='text'
               name='username'
@@ -43,6 +50,8 @@ class LoginForm extends React.Component {
               value={this.state.credentials.password}
               placeholder='password'
             />
+
+            <button type='submit'>Log In</button>
           </form>
         </div>
 
