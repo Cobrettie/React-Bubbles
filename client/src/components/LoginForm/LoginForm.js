@@ -6,7 +6,8 @@ class LoginForm extends React.Component {
     credentials: {
       username: 'Lambda School',
       password: 'i<3Lambd4'
-    }
+    },
+    isLoading: false
   }
 
   handleChange = event => {
@@ -20,16 +21,22 @@ class LoginForm extends React.Component {
 
   login = event => {
     event.preventDefault()
+    this.setState({ isLoading: true })
 
     axios.post('http://localhost:5000/api/login', this.state.credentials)
       .then(response => {
         console.log('LoginForm post req res', response)
         window.localStorage.setItem('token', response.data.payload)
+        setTimeout(() => {
+          this.setState({ isLoading: false })
+          // this.props.history.push('/bubblepage')
+        }, 500)
       })
       .catch(err => console.log(err))
   }
 
   render() {
+    console.log('LoginForm props', this.props)
     return(
       <div>
         <h2>Log in</h2>
