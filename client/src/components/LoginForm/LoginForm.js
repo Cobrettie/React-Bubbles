@@ -1,5 +1,6 @@
 import React from 'react';
-import axios from 'axios';
+
+import { axiosWithAuth } from '../../util/axiosWithAuth';
 
 class LoginForm extends React.Component {
   state = {
@@ -22,14 +23,14 @@ class LoginForm extends React.Component {
   login = event => {
     event.preventDefault()
     this.setState({ isLoading: true })
-
-    axios.post('http://localhost:5000/api/login', this.state.credentials)
+    axiosWithAuth()
+      .post('http://localhost:5000/api/login', this.state.credentials)
       .then(response => {
         console.log('LoginForm post req res', response)
         window.localStorage.setItem('token', response.data.payload)
         setTimeout(() => {
           this.setState({ isLoading: false })
-          // this.props.history.push('/bubblepage')
+          this.props.history.push('/bubblepage')
         }, 500)
       })
       .catch(err => console.log(err))
