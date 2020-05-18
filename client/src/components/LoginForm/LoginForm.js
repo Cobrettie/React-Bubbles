@@ -26,7 +26,6 @@ class LoginForm extends React.Component {
     axiosWithAuth()
       .post('http://localhost:5000/api/login', this.state.credentials)
       .then(response => {
-        console.log('LoginForm post req res', response)
         window.localStorage.setItem('token', response.data.payload)
         setTimeout(() => {
           this.setState({ isLoading: false })
@@ -37,7 +36,6 @@ class LoginForm extends React.Component {
   }
 
   render() {
-    console.log('LoginForm props', this.props)
     return(
       <div>
         <h2>Log in</h2>
