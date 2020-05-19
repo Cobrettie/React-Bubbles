@@ -10,6 +10,7 @@ const ColorList = ({ colors, updateColors, refresh, setRefresh }) => {
   console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [newColor, setNewColor] = useState(initialColor);
 
 
   const editColor = color => {
@@ -19,17 +20,30 @@ const ColorList = ({ colors, updateColors, refresh, setRefresh }) => {
 
   const saveEdit = e => {
     e.preventDefault();
-
     axiosWithAuth()
       .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
       .then(response => {
         console.log('ColorList axios PUT req res', response)
         updateColors(colors)
         setColorToEdit(response.data)
+        setEditing(false)
         setRefresh(!refresh)
       })
       .catch(err => console.log(err))
   };
+
+  const addColor = event => {
+    event.preventDefault()
+    axiosWithAuth()
+      .post(`http://localhost:5000/api/colors`, newColor)
+      .then(response => {
+        console.log('addColor post req res', response)
+        // setNewColor()
+        updateColors([...colors, newColor])
+        setRefresh(!refresh)
+      })
+      .catch(err => console.log(err))
+  }
 
   const deleteColor = color => {
     axiosWithAuth()
@@ -44,9 +58,11 @@ const ColorList = ({ colors, updateColors, refresh, setRefresh }) => {
   return (
     <div className="colors-wrap">
       <p>colors</p>
+
       <ul>
         {colors.map(color => (
-          <li key={color.color} onClick={() => editColor(color)}>
+          <li key={color.id} onClick={() => editColor(color)}>
+            {console.log(color)}
             <span>
               <span className="delete" onClick={e => {
                     e.stopPropagation();
@@ -64,6 +80,7 @@ const ColorList = ({ colors, updateColors, refresh, setRefresh }) => {
           </li>
         ))}
       </ul>
+
       {editing && (
         <form onSubmit={saveEdit}>
           <legend>edit color</legend>
@@ -94,7 +111,37 @@ const ColorList = ({ colors, updateColors, refresh, setRefresh }) => {
           </div>
         </form>
       )}
+
       <div className="spacer" />
+
+      {/* form to add a new color */}
+      <div>
+        <form onSubmit={addColor}>
+          <input
+            placeholder='Color Name'
+            onChange={e =>
+              setNewColor({ ...newColor, color: e.target.value })
+            }
+            value={newColor.color}
+          />
+
+          <input
+            placeholder='Hex Value'
+            onChange={e =>
+              setNewColor({
+                ...newColor,
+                code: { hex: e.target.value }
+              })
+            }
+            value={newColor.code.hex}
+          />
+
+          <button type='submit'>Add Color</button>
+        </form>
+      </div>
+
+
+
       {/* stretch - build another form here to add a color */}
     </div>
   );
